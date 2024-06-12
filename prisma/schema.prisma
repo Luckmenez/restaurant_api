@@ -13,15 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus {
+  OPEN
+  CLOSED
+}
+
+enum TableStatus {
+  OCCUPIED
+  AVAILABLE
+}
+
 model Order {
-  id          String   @id @default(cuid())
-  table       Table    @relation(fields: [tableId], references: [id])
+  id          String      @id @default(cuid())
+  table       Table       @relation(fields: [tableId], references: [id])
   tableId     String
   total_price Float
-  status      String
-  dishes      Dish[]   @relation("OrderDishes")
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  status      OrderStatus @default(OPEN)
+  dishes      Dish[]      @relation("OrderDishes")
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
 }
 
 model Dish {
@@ -38,10 +48,12 @@ model Dish {
 }
 
 model Table {
-  id          String   @id @default(cuid())
-  number      Int      @unique()
-  status      String
+  id          String      @id @default(cuid())
+  number      Int         @unique()
+  status      TableStatus @default(AVAILABLE)
   orders      Order[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
 }
+
+
